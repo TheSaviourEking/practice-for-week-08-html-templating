@@ -104,6 +104,8 @@ const server = http.createServer((req, res) => {
     if (req.method === 'GET' && req.url === '/dogs/new') {
 	// Your code here
 	const htmlPage = fs.readFileSync('./views/create-dog.html', 'utf-8');
+	res.statusCode = 200;
+	res.setHeader('content-Type', 'text/html');
 	return res.end(htmlPage);
     }
 
