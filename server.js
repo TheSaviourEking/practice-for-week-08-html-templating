@@ -111,7 +111,8 @@ const server = http.createServer((req, res) => {
 
     // Phase 3: GET /dogs/:dogId
     if (req.method === 'GET' && req.url.startsWith('/dogs/')) {
-      const urlParts = req.url.split('/');
+	const urlParts = req.url.split('/');
+	// console.log(urlParts, 'Parts');
       if (urlParts.length === 3) {
         const dogId = urlParts[2];
         const dog = dogs.find(dog => dog.dogId === Number(dogId));
@@ -135,7 +136,7 @@ const server = http.createServer((req, res) => {
     // Phase 4: POST /dogs
     if (req.method === 'POST' && req.url === '/dogs') {
 	// Your code here
-	const dog = { dogId: getNewDogId(), name: req.body.name, age: Number(req.body.age) };
+	const dog = { dogId: getNewDogId(), name: req.body?.name, age: Number(req.body?.age) };
 	dogs.push(dog);
 	console.log(dogs);
 
@@ -146,11 +147,22 @@ const server = http.createServer((req, res) => {
 
     // Phase 5: GET /dogs/:dogId/edit
     if (req.method === 'GET' && req.url.startsWith('/dogs/')) {
-      const urlParts = req.url.split('/');
+	const urlParts = req.url.split('/');
       if (urlParts.length === 4 && urlParts[3] === 'edit') {
         const dogId = urlParts[2];
         const dog = dogs.find(dog => dog.dogId === Number(dogId));
-        // Your code here
+          // Your code here
+	  if (dog) {
+	      const htmlPage = fs.readFileSync('./views/edit-dog.html', 'utf-8')
+		    .replace(/#{dogId}/g, dogId)
+		    .replace(/#{name}/g, dog.name)
+		    .replace(/#{age}/g, dog.age);
+
+	      res.statusCode = 200;
+	      res.setHeader('content-Type', 'text/html');
+	      return res.end(htmlPage);
+	  }
+	  return res.end('not a valid dog');
       }
     }
 
@@ -160,7 +172,14 @@ const server = http.createServer((req, res) => {
       if (urlParts.length === 3) {
         const dogId = urlParts[2];
         const dog = dogs.find(dog => dog.dogId === Number(dogId));
-        // Your code here
+          // Your code here
+	  let reqBody ;
+	  dog.name = req.body?.name;
+	  dog.age = Number(req.body?.age);
+
+	  res.statusCode = 302;
+	  res.setHeader('Location', `/dogs/${dogId}`);
+	  return res.end();
       }
     }
 
