@@ -127,9 +127,8 @@ const server = http.createServer((req, res) => {
 	      
 	  };
 
-	  res.statusCode = 200;
-	  res.setHeader('content-Type', 'text/html');
-	  return res.end(htmlPage);
+	  // res.statusCod = 404;
+	  // res.setHeader('content-Type', 'text/html');
       }
     }
 
@@ -185,11 +184,23 @@ const server = http.createServer((req, res) => {
 
     // No matching endpoint
     const htmlPage = fs.readFileSync("./views/error.html", 'utf-8');
-    const resBody = htmlPage
-      .replace(/#{message}/g, 'Page Not Found');
+    let resBody = htmlPage
+	.replace(/#{message}/g, 'Page Not Found');
 
     res.statusCode = 404;
     res.setHeader("Content-Type", "text/html");
+      const reqUrlArr = req.url.split('/');
+      if (reqUrlArr.length === 3) {
+	  // dog => id
+	  // return 'unable to find dog'
+
+	  const id = reqUrlArr[2];
+	  resBody = htmlPage.replace(/#{message}/g, `Unable to find "${id}"`);
+	  return res.end(resBody);
+      }
+      
+    // res.statusCode = 404;
+    // res.setHeader("Content-Type", "text/html");
     res.write(resBody);
     return res.end();
   });
