@@ -115,7 +115,20 @@ const server = http.createServer((req, res) => {
       if (urlParts.length === 3) {
         const dogId = urlParts[2];
         const dog = dogs.find(dog => dog.dogId === Number(dogId));
-        // Your code here
+          // Your code here
+	  const htmlPage = fs.readFileSync('./views/dog-details.html', 'utf-8');
+	  
+	  if (dog) {
+	      const fixedHtmlPage = htmlPage.replace(/#{name}/g, dog.name).replace(/#{age}/g, dog.age);
+		  res.statusCode = 200;
+		  res.setHeader('content-Type', 'text/html');
+		  return res.end(fixedHtmlPage);
+	      
+	  };
+
+	  res.statusCode = 200;
+	  res.setHeader('content-Type', 'text/html');
+	  return res.end(htmlPage);
       }
     }
 
