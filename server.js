@@ -88,12 +88,23 @@ const server = http.createServer((req, res) => {
 
     // Phase 1: GET /dogs
     if (req.method === 'GET' && req.url === '/dogs') {
-      // Your code here
+	// Your code here
+	let response = '';
+	dogs.forEach(dog => {
+	    response += `<li>${dog.name}</li>`;
+	});
+	const htmlPage = fs.readFileSync('./views/dogs.html', 'utf-8');
+
+	res.statusCode = 200;
+	res.setHeader('content-Type', 'text/html');
+	return res.end(htmlPage.replace(/#{dogsList}/g, response));
     }
 
     // Phase 2: GET /dogs/new
     if (req.method === 'GET' && req.url === '/dogs/new') {
-      // Your code here
+	// Your code here
+	const htmlPage = fs.readFileSync('./views/create-dog.html', 'utf-8');
+	return res.end(htmlPage);
     }
 
     // Phase 3: GET /dogs/:dogId
